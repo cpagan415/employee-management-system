@@ -1,9 +1,15 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
-const Choices = require('inquirer/lib/objects/choices');
+const db = require('./db/connect');
+
 
 //here will be the path to generate the HTML
 //need to figure out how to do the title another time 
+//using easy-table to displat tables, see references here:
+//https://github.com/mcintyrehh/bamazon/blob/master/bamazonCustomer.js
+//https://www.npmjs.com/package/easy-table
+var Table = require('easy-table');
+   
 
 function title() {    
     console.log(" -----------------------------------------------------\n" +
@@ -26,7 +32,10 @@ function title() {
 //this is to bring up the SQL database
 function viewAllDept()
 {
-    console.log('viewing all departments here')
+    
+    db.query(`SELECT * FROM departments`, (err, rows) => {
+        console.log(rows);
+    });
 }
 
 title();
