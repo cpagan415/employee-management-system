@@ -9,6 +9,7 @@ const db = require('./db/connect');
 //https://github.com/mcintyrehh/bamazon/blob/master/bamazonCustomer.js
 //https://www.npmjs.com/package/easy-table
 var Table = require('easy-table');
+
    
 
 function title() {    
@@ -29,34 +30,65 @@ function title() {
                 " -----------------------------------------------------");
 }
 
-//this is to bring up the SQL database
+//this is to bring up the SQL database with easy-table
 function viewAllDept()
 {
     
     db.query(`SELECT * FROM departments`, (err, rows) => {
-        console.log(rows);
+        var t = new Table;
+        rows.forEach(function(departments){
+            t.cell('Department Id', departments.id)
+            t.cell('Department', departments.dept_name)
+            t.newRow();
+        })
+        console.log(t.toString());
     });
+
+}
+function viewAllRoles(){
+    const sql = `select roles. *, departments.dept_name from roles left join departments on roles.role_id = departments.id`;
+    db.query(sql, (err, rows) =>{
+        var t = new Table;
+        rows.forEach(function(roles){
+            t.cell('Position', roles.job_title)
+            t.cell('Department', roles.role_id)
+            t.cell('Salary', roles.salary)
+            t.newRow();
+        })
+        console.log(t.toString());
+    })
 }
 
-title();
+//title();
 
-inquirer.prompt([
-        {
-            name: 'department',
-            type: 'list',
-            message: 'Which department would you like to view?',
-            choices: ['View all Departments', 'View all Roles', 'View all Employees', 'Add a Department','Add a Role', 'Add an Employee', 'Update Employees' ]
-        },
-        {
-            name: 'allDept',
-            when:({ department }) =>
-            {
-                if(department === 'View all Departments'){
-                    viewAllDept();
-                }
-            }  
-        }
-    ])
-    .then(function(answer){
-        console.log(answer);
-    })
+
+const questions = [
+    {
+        name: 'department',
+        type: 'list',
+        message: 'Which department would you like to view?',
+        choices: ['View all Departments', 'View all Roles', 'View all Employees', 'Add a Department','Add a Role', 'Add an Employee', 'Update Employees' ]
+    }   
+];
+
+inquirer.prompt(questions).then( function(answer){
+    var dept = answer.department;
+    if(dept === 'View all Departments')
+    {
+        viewAllDept();
+    }
+    else if(dept === 'View all Roles')
+    {
+        viewAllRoles();
+    }
+    else if(dept === 'View all Employees' )
+    {
+        console.log('viewing employee table here');
+    }
+    else{
+        console.log('End of Program');
+    }
+
+})
+
+   
