@@ -8,7 +8,6 @@ const db = require('./db/connect');
 //using easy-table to displat tables, see references here:
 //https://github.com/mcintyrehh/bamazon/blob/master/bamazonCustomer.js
 //https://www.npmjs.com/package/easy-table
-var Table = require('easy-table');
 
    
 
@@ -31,7 +30,7 @@ function title() {
 }
 
 //this is to bring up the SQL database with easy-table
-function viewAllDept()
+/*function viewAllDept()
 {
     
     db.query(`SELECT * FROM departments`, (err, rows) => {
@@ -45,6 +44,8 @@ function viewAllDept()
     });
 
 }
+
+
 function viewAllRoles(){
     const sql = `select roles. *, departments.dept_name from roles left join departments on roles.role_id = departments.id`;
     db.query(sql, (err, rows) =>{
@@ -61,34 +62,14 @@ function viewAllRoles(){
 
 //title();
 
+//here I need to make prompt questions then take
+//those prompt questions need to display the correct sql table
+//the new problem you are having is that the prompt question
+//does not show after the table appears*/
 
-const questions = [
-    {
-        name: 'department',
-        type: 'list',
-        message: 'Which department would you like to view?',
-        choices: ['View all Departments', 'View all Roles', 'View all Employees', 'Add a Department','Add a Role', 'Add an Employee', 'Update Employees' ]
-    }   
-];
-
-inquirer.prompt(questions).then( function(answer){
-    var dept = answer.department;
-    if(dept === 'View all Departments')
-    {
-        viewAllDept();
-    }
-    else if(dept === 'View all Roles')
-    {
-        viewAllRoles();
-    }
-    else if(dept === 'View all Employees' )
-    {
-        console.log('viewing employee table here');
-    }
-    else{
-        console.log('End of Program');
-    }
+require('console.table');
+db.query('SELECT * FROM departments', (err, rows)=>{
+    console.table(rows);
 
 })
 
-   
