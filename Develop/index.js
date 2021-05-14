@@ -1,6 +1,9 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
-const db = require('./db/connect');
+const db = require('./db/connect');const { table } = require('console');
+const { deepEqual } = require('assert');
+const { debugPort } = require('process');
+require('console.table');
 
 
 //here will be the path to generate the HTML
@@ -67,9 +70,24 @@ function viewAllRoles(){
 //the new problem you are having is that the prompt question
 //does not show after the table appears*/
 
-require('console.table');
-db.query('SELECT * FROM departments', (err, rows)=>{
-    console.table(rows);
 
+inquirer.prompt([
+    {
+    name: 'appChoice',
+    type: 'list',
+    message: 'What would you like to do?',
+    choices: ['View All Departments', 'View All Roles', 'View All Employees']
+    }
+]).then(answer => {
+    //validation here, need async function to repeat question?
+    if(answer.appChoice === 'View All Departments')
+    {
+        db.query(`SELECT * FROM departments`, (err, data)=>{
+            console.table(data);
+        })
+    }
+    else
+    {
+        console.log('run again');
+    }
 })
-
