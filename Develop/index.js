@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const db = require('./db/connect');
+const { debugPort } = require('process');
 require('console.table');
 
 
@@ -70,6 +71,21 @@ const allEmployees = function()
    
 }
 
+const addDept = function()
+{
+    inquirer.prompt([
+        {
+            name: 'addDept',
+            type: 'input',
+            message: 'Enter new department name: '
+        }
+    ]).then((answer) => {
+      db.query(`INSERT INTO departments (dept_name) VALUES('${answer.addDept}')`, (err, result) =>{
+      startProgram();
+      })
+    })
+}
+
 
 const appChoice = [
     {
@@ -95,6 +111,9 @@ const appChoice = [
                 break;
             case 'View All Employees':
                 allEmployees();
+                break;
+            case 'Add a Department':
+                addDept();
                 break;
         }
     })
