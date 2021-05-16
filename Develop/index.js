@@ -1,16 +1,8 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
-const db = require('./db/connect');const { table } = require('console');
-const { deepEqual } = require('assert');
-const { debugPort } = require('process');
+const db = require('./db/connect');
 require('console.table');
 
-
-//here will be the path to generate the HTML
-//need to figure out how to do the title another time 
-//using easy-table to displat tables, see references here:
-//https://github.com/mcintyrehh/bamazon/blob/master/bamazonCustomer.js
-//https://www.npmjs.com/package/easy-table
 
    
 
@@ -32,62 +24,87 @@ function title() {
                 " -----------------------------------------------------");
 }
 
-//this is to bring up the SQL database with easy-table
-/*function viewAllDept()
-{
-    
-    db.query(`SELECT * FROM departments`, (err, rows) => {
-        var t = new Table;
-        rows.forEach(function(departments){
-            t.cell('Department Id', departments.id)
-            t.cell('Department', departments.dept_name)
-            t.newRow();
-        })
-        console.log(t.toString());
-    });
 
+
+//queries here and maybe would send to another file 
+function allDept()
+{
+    const sql= `SELECT id AS "Department Id", dept_name AS Department FROM departments`;
+    db.query(sql, (err, data) =>{
+        console.table(data);
+        startProgram();
+    })
+}
+
+const allRoles = function()
+{
+    const sql= `SELECT roles.id AS "Role Id", roles.job_title AS "Job Title", roles.salary AS Salary,
+    roles.dept_id AS "Department Id",
+    departments.dept_name AS "Department Name"
+    FROM roles
+    LEFT JOIN departments ON roles.dept_id = departments.id;`;
+    db.query(sql, (err, data) =>{
+        console.table(data);
+        startProgram();
+    })
+    
+}
+
+const allEmployees = function()
+{
+    const sql= `SELECT employee.id AS "Employee Id",
+    employee.first_name AS "First Name",
+    employee.last_name AS "Last Name",
+    roles.job_title AS "Job Title",
+    departments.dept_name AS "Department",
+    roles.salary AS "Salary",
+    CONCAT(manager.first_name," ",manager.last_name) AS "Manager"
+    FROM employee
+    LEFT JOIN roles ON employee.role_id = roles.id
+    LEFT JOIN departments ON roles.dept_id = departments.id
+    LEFT JOIN manager ON employee.manager_id = manager.id;`;
+    db.query(sql, (err, data) =>{
+        console.table(data);
+        startProgram();
+    })
+   
 }
 
 
-function viewAllRoles(){
-    const sql = `select roles. *, departments.dept_name from roles left join departments on roles.role_id = departments.id`;
-    db.query(sql, (err, rows) =>{
-        var t = new Table;
-        rows.forEach(function(roles){
-            t.cell('Position', roles.job_title)
-            t.cell('Department', roles.role_id)
-            t.cell('Salary', roles.salary)
-            t.newRow();
-        })
-        console.log(t.toString());
+const appChoice = [
+    {
+        name: 'appChoice',
+        type: 'list',
+        message: 'What would you like to do?',
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role']
+        }
+];
+
+
+ function startProgram()
+{
+
+    
+    inquirer.prompt(appChoice).then(answer => {
+        switch(answer.appChoice) {
+            case 'View All Departments':
+                allDept();
+                break;
+            case 'View All Roles':
+                allRoles();
+                break;
+            case 'View All Employees':
+                allEmployees();
+                break;
+        }
+    })
+    .catch(error =>{
+        if(error.isTtyError)
+        {
+            console.log('Something went wrong');
+        }
     })
 }
 
 //title();
-
-//here I need to make prompt questions then take
-//those prompt questions need to display the correct sql table
-//the new problem you are having is that the prompt question
-//does not show after the table appears*/
-
-
-inquirer.prompt([
-    {
-    name: 'appChoice',
-    type: 'list',
-    message: 'What would you like to do?',
-    choices: ['View All Departments', 'View All Roles', 'View All Employees']
-    }
-]).then(answer => {
-    //validation here, need async function to repeat question?
-    if(answer.appChoice === 'View All Departments')
-    {
-        db.query(`SELECT * FROM departments`, (err, data)=>{
-            console.table(data);
-        })
-    }
-    else
-    {
-        console.log('run again');
-    }
-})
+startProgram();
