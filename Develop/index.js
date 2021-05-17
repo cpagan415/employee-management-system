@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const db = require('./db/connect');
-const { exit } = require('process');
 const { start } = require('repl');
 require('console.table');
 
@@ -26,6 +25,8 @@ function title() {
 }
 
 title();
+
+
 
 //queries here and maybe would send to another file 
 function allDept()
@@ -86,62 +87,45 @@ const addDept = function()
     })
 }
 
-const addRole = function()
-{
+//ADD ROLE FUNCTION
+
+const addRole = function(){
+
+    db.query(`SELECT dept_name FROM departments`, (err, data) => {
     inquirer.prompt([
         {
             name: 'roleTitle',
             type: 'input',
-            message: 'Enter the name of the position'
+            message: 'Enter title of new role: '
         },
         {
             name: 'salary',
-            type: 'input',
-            message: 'Enter salary amount: '   //add validation for decimal, decimal is automatically placed in sql chart
+            input: 'input',
+            message: 'Enter salary amount (round to the nearest whole number yearly): '
         },
         {
-            name: 'deptId',
-            type: 'input',
-            message: 'Enter the Department Id:' //validation that dept ID is a number between the listed department ID range, does the department exist?
+            name: 'department',
+            type: 'list',
+            choices: ()=>data.map(data=>data.dept_name)
         }
-
-    ]).then(answer =>{
-        console.log(answer.salary + ' '+ answer.deptId);
-        db.query(`INSERT INTO roles (job_title, salary, dept_id) VALUES ('${answer.roleTitle}', ${answer.salary}, ${answer.deptId});`, (err, data)=>{
-           startProgram();
+    ]).then(answer => {
+        db.query(`SELECT dept_name FROM departments`, (err, data)=>{
+            const deptArray = data.map(data=>data.dept_name);
+            const deptTitle = deptArray.find(deptTitle => deptTitle === answer.department);
+            const deptId = deptArray.indexOf(deptTitle) + 1;
+            db.query(`INSERT INTO roles (job_title, salary, dept_id) VALUES ('${answer.roleTitle}', ${answer.salary}, ${deptId})`, (err, data) =>
+            {
+                startProgram();
+            })
         })
     })
+})
+
+//ADD ROLE FUNCTION END
+
+
 }
 
-const addEmply = function()
-{
-    inquirer.prompt([
-        {
-            name:'firstName',
-            type:'input',
-            message:'New employee first name:'
-        },
-        {
-            name:'lastName',
-            type:'input',
-            message:'New employee last name:'
-        },
-        {
-            name: 'roleId',
-            type: 'input',
-            message: 'Enter role id number for new employee: '//validation here for rold id, make sure it is not out of range   
-        },
-        {
-            name: 'managerId',
-            type: 'input',
-            message: 'Enter manager id for new employee:'//validation again here to check range, depending on number maybe add <manager> was added.
-        }
-    ]).then(answer =>{
-        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.firstName}', '${answer.lastName}', ${answer.roleId}, ${answer.managerId});`, (err, data) =>{
-            startProgram();
-        })
-    })
-}
 
 const appChoice = [
     {
@@ -153,7 +137,7 @@ const appChoice = [
 ];
 
 
- function startProgram()
+function startProgram()
 {
 
     
