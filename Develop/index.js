@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 const db = require('./db/connect');
-const { start } = require('repl');
 require('console.table');
 
 
@@ -108,23 +107,93 @@ const addRole = function(){
             type: 'list',
             choices: ()=>data.map(data=>data.dept_name)
         }
-    ]).then(answer => {
+    ]).then(answer=>{
         db.query(`SELECT dept_name FROM departments`, (err, data)=>{
             const deptArray = data.map(data=>data.dept_name);
             const deptTitle = deptArray.find(deptTitle => deptTitle === answer.department);
             const deptId = deptArray.indexOf(deptTitle) + 1;
-            db.query(`INSERT INTO roles (job_title, salary, dept_id) VALUES ('${answer.roleTitle}', ${answer.salary}, ${deptId})`, (err, data) =>
-            {
-                startProgram();
+
+            db.query(`INSERT INTO roles (job_title, salary, dept_id) VALUES ('${answer.roleTitle}', ${answer.salary}, ${deptId})`, (err, data)=>{
+                console.log('New role added!');
+                startProgram()
             })
         })
     })
-})
+    
+    })
+}
 
 //ADD ROLE FUNCTION END
+//ADD EMPLOYEE FUNCTION
+const addEmply = function(){
+    db.query(`SELECT job_title AS position FROM roles;`, (err,data)=>{
+        inquirer.prompt([
+            {
+                name:'firstName',
+                type: 'input',
+                message: 'Enter first name of new employee:'
+            },
+            {
+                name:'lastName',
+                type: 'input',
+                message: 'Enter last name of new employee:'
+            },
+            {
+                name: 'roleTitle',
+                type: 'list',
+                message: "What is the new employee's position: ",
+                //taking data from sql and turning it into a list array
+                choices: ()=>data.map(data=>data.position)
+            },
+            {
+                name: 'manager',
+                type: 'list',
+                message: 'Who does the new employee report to? ',
+                choices: ['Pat Schwartz', 'Jennifer Williams', 'Paul Mueller', 'Andrew Pagan', 'Catherine Solange', 'Yansi Lui', 'Beatrice Ross']
+                
+            }
+        ]).then(answer=>{
+            db.query(`SELECT job_title FROM roles;`, (err, data)=>{
+                const roleArray = data.map(data=>data.job_title);
+                const roleTitle = roleArray.find(jobTitle => jobTitle === answer.roleTitle);
+                const roleId = roleArray.indexOf(roleTitle) + 1;
 
+                //assoc. managers with sql ids.
+                switch(answer.manager){
+                    case 'Pat Schwartz':
+                        answer.manager = 1;
+                        break;
+                    case 'Jennifer Williams':
+                        answer.manager = 2;
+                        break;
+                    case 'Paul Mueller':
+                        answer.manager = 3;
+                        break;
+                    case 'Andrew Pagan':
+                        answer.manager = 4;
+                        break;
+                    case 'Catherine Solange':
+                        answer.manager = 5;
+                        break;
+                    case 'Yansi Lui':
+                        answer.manager = 6;
+                        break;
+                    case 'Beatrice Ross':
+                        answer.manager = 7;
+                        break;
+                }
 
+                
+    
+                db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${answer.firstName}', '${answer.lastNAme}', ${roleId}, ${answer.manager} )`, (err, data)=>{
+                    console.log('New employee added!');
+                    startProgram()
+                })
+            })
+        })
+    })
 }
+//ADD EMPLOYEE FUNCTION END 
 
 
 const appChoice = [
