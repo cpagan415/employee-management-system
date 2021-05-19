@@ -24,7 +24,7 @@ function title() {
         "░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝\n");
 }
 
-//title();
+title();
 
 
 //queries here and maybe would send to another file 
@@ -42,8 +42,8 @@ function allDept()
 const allRoles = function()
 {
     const sql= `SELECT roles.id AS "Role Id", roles.job_title AS Position,
-    departments.dept_name AS Department,
-    roles.salary AS Salary FROM roles
+    departments.dept_name AS Department
+    FROM roles
     LEFT JOIN departments ON roles.dept_id = departments.id;`;
     db.query(sql, (err, data) =>{
         console.table(data);
@@ -57,6 +57,7 @@ const allEmployees = function()
     const sql= `select employee.id AS "Employee Id", 
     concat(employee.first_name," ",employee.last_name) AS Employee,
     roles.job_title as Position, 
+    roles.salary as Salary,
     departments.dept_name as Department, 
     concat(manager.first_name," ",manager.last_name) AS Manager
     FROM employee
