@@ -21,7 +21,11 @@ A simple installation. Download to your computer and run the develop file on the
 
 ## Usage 
 
-Please view the video here: <iframe src="https://drive.google.com/file/d/1Qc5CaQLWHCeNw49pD2Y-rlx27UY6tkUt/preview" width="640" height="480"></iframe>
+Please view the video here: 
+
+[video](https://user-images.githubusercontent.com/76018424/118742812-18881300-b81f-11eb-9d32-d05869ce48c4.mp4)
+
+
 
 
 
