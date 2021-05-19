@@ -11,9 +11,11 @@ The program can also be improved in the furture by having the ability to delete 
 
 ## Dependencies
 
-[Inquirer](https://www.npmjs.com/package/inquirer)
-[MySql](https://dev.mysql.com/doc/refman/8.0/en/) 
-[Console-Table](https://www.npmjs.com/package/console.table) 
+-[Inquirer](https://www.npmjs.com/package/inquirer)
+
+-[MySql](https://dev.mysql.com/doc/refman/8.0/en/) 
+
+-[Console-Table](https://www.npmjs.com/package/console.table) 
 
 ## Installing 
 
@@ -21,10 +23,12 @@ A simple installation. Download to your computer and run the develop file on the
 
 ## Usage 
 
-Please view the video here: 
+Attached is a video on how the application works: 
 
 [video](https://user-images.githubusercontent.com/76018424/118742812-18881300-b81f-11eb-9d32-d05869ce48c4.mp4)
 
+### Author
+Github: [cpagan415](github.com/cpagan415)
 
 
 
